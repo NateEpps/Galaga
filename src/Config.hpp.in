@@ -1,0 +1,20 @@
+//
+// Config.hpp(.in)
+// Nathanael Epps
+//
+
+#ifndef GALAGA_CONFIG_FILE
+#define GALAGA_CONFIG_FILE
+
+#include <string>
+
+#define CMAKE_BINARY_DIR (std::string("${CMAKE_BINARY_DIR}"))
+#define CMAKE_CXX_COMPILER (std::string("${CMAKE_CXX_COMPILER}"))
+#define CMAKE_CXX_STANDARD (std::string("${CMAKE_CXX_STANDARD}"))
+#define CMAKE_SOURCE_DIR (std::string("${CMAKE_SOURCE_DIR}"))
+#define CMAKE_SYSTEM (std::string("${CMAKE_SYSTEM}"))
+#define CMAKE_VERSION (std::string("${CMAKE_VERSION}"))
+
+#define GALAGA_VERSION (std::string("${Galaga_VERSION}"))
+
+#endif
