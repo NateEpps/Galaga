@@ -31,7 +31,7 @@ namespace impl {
 
 #ifdef DEBUG
 
-#define Print(...) impl::print(std::cout, __PRETTY_FUNCTION__, ":", __LINE__, ":\n\t", __VA_ARGS__, "\n")
+#define Print(...) impl::print(std::cout, __PRETTY_FUNCTION__, ":", __LINE__, ":\t", __VA_ARGS__, "\n")
 
 #else
 # define Print(...) 
