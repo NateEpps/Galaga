@@ -119,7 +119,8 @@ void Enemy::fireAt(sf::Vector2f target)
 
 void Enemy::setSpeedFactor(float f)
 {
-    assert(f > 0);
+#warning Check f, use something other then "assert"
+    // assert(f > 0);
     
     speedFactor = f;
 }

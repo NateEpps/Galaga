@@ -3,7 +3,7 @@
 #
 
 file(GLOB SRC "*.*pp")
-file(GLOB RSS "${CMAKE_SOURCE_DIR}/src/rss/*.*pp")
+file(GLOB RSS "${CMAKE_SOURCE_DIR}/src/Rss/*.*pp")
 
 message(STATUS "Found source code in ${CMAKE_CURRENT_SOURCE_DIR}")
 
