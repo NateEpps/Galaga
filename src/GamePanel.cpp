@@ -76,6 +76,7 @@ GamePanel::MissileItr GamePanel::testAndRemoveMissiles(MissileItr start, Missile
     });
 }
 
+#warning Various "update"'s originating here us MS time... which is too slow
 void GamePanel::update(sf::Time dt)
 {
     pplayer->update(dt);

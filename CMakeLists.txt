@@ -9,6 +9,8 @@ cmake_minimum_required(VERSION 3.1)
 
 project(Galaga VERSION 0.7)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Find SFML
 find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
 

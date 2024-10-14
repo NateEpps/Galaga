@@ -87,7 +87,11 @@ void Player::update(sf::Time dt)
     else if (Keyboard::isKeyPressed(Keyboard::Right))
         dx = 1;
     
+#warning BUG LOCATED
     self.move(dx * dt.asMilliseconds(), dy * dt.asMilliseconds());
+
+    if (dt.asMilliseconds() <= 1)
+        throw MakeException("dt.asMilliseconds() <= 1");
     
     // don't go offscreen...
     OffscreenGuard(self, Vector2f(getBounds().width, getBounds().height));
