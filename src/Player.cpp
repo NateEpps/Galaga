@@ -67,8 +67,10 @@ void Player::process(sf::Event event)
     }
 }
 
-void Player::update(sf::Time dt)
+void Player::update(sf::Time deltaTime)
 {
+    const long deltaMicro = deltaTime.asMicroseconds();
+
     int dx = 0, dy = 0;
 #ifdef MOVE_UP_DOWN
     if (Keyboard::isKeyPressed(Keyboard::Down))
@@ -81,17 +83,14 @@ void Player::update(sf::Time dt)
     else if (Keyboard::isKeyPressed(Keyboard::Key::Right))
         dx = 1;
     
-#warning BUG LOCATED
-    self.move(sf::Vector2f(dx * dt.asMilliseconds(), dy * dt.asMilliseconds()));
-
-    if (dt.asMilliseconds() <= 1)
-        throw MakeException("dt.asMilliseconds() <= 1");
+    constexpr float MoveAdjust = 0.0005;
+    self.move(sf::Vector2f(dx * deltaMicro * MoveAdjust, dy * deltaMicro * MoveAdjust));
     
     // don't go offscreen...
     OffscreenGuard(self, Vector2f(getBounds().size.x, getBounds().size.y));
     
     // ... or past this line
-#warning Rethink this part
+    /// @todo Rethink this part
     static const Vector2u wsize = GetLastWindow()->getSize();
     static const float bound = wsize.y * 0.6;
     if (self.getPosition().y < bound)
@@ -102,9 +101,11 @@ void Player::update(sf::Time dt)
         return;
     
     bool shouldPop = false;
+
+    static constexpr float MissileAdjust = 0.0005;
     
     for (Sprite& ref : missiles) {
-        ref.move(sf::Vector2f(0, -1 * dt.asMilliseconds()));
+        ref.move(sf::Vector2f(0, -1 * deltaMicro * MissileAdjust));
         
         if (ref.getPosition().y < (-2 * ref.getGlobalBounds().size.y)) {
             if (shouldPop)

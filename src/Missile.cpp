@@ -45,7 +45,10 @@ double Missile::getSpeedFactor() const
 
 void Missile::update(sf::Time dt)
 {
-    moveAtAngle(direction, dt.asMilliseconds() * getSpeedFactor());
+#warning Missile::update: Magic number 
+    static constexpr float Adjust = 5;
+
+    moveAtAngle(direction, dt.asMilliseconds() * getSpeedFactor() * Adjust);
 }
 
 sf::FloatRect Missile::getGlobalBounds() const

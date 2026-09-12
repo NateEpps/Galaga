@@ -59,11 +59,15 @@ Vector2f Enemy::getCurrentPoint() const
     return path.front();
 }
 
-void Enemy::update(sf::Time dt)
+void Enemy::update(sf::Time deltaTime)
 {
+#warning Enemy::update: Magic numbers
+    constexpr float Adjust = 0.002;
+    const long microSec = deltaTime.asMicroseconds() * Adjust;
+
     // move the enemy along it's path
     if (!path.empty()) {
-        moveTowards(path.front(), dt.asMilliseconds());
+        moveTowards(path.front(), microSec);
         
         static const auto wsize = GetLastWindow()->getSize();
         
@@ -75,7 +79,7 @@ void Enemy::update(sf::Time dt)
     
     // update any missiles currently in flight
     for (Missile& m : missiles)
-        m.update(dt);
+        m.update(deltaTime);
     
     // get rid of missiles that go offscreen
     missiles.erase(std::remove_if(missiles.begin(), missiles.end(), [](const Missile& m) {

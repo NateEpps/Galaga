@@ -16,6 +16,11 @@ static const int Offset = 5;
 static const int LowSpeed = 50;
 static const int HighSpeed = 125;
 
+// #define START_AT_TOP
+#ifdef START_AT_TOP
+#warning START_AT_TOP defined
+#endif
+
 Stars::Stars(const int amt) : wsize(GetLastWindow()->getSize())
 {
     for (int x = 0; x < amt; x++) {
