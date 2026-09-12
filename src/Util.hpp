@@ -17,8 +17,7 @@ using std::string;
 
 void PrintInfo();
 
-typedef sf::Uint32 mask_t;
-void GetVideoMode(sf::VideoMode&, mask_t&, bool);
+void GetVideoMode(sf::VideoMode&, sf::State&, bool);
 
 void SetLastWindow(sf::RenderWindow*);
 sf::RenderWindow* GetLastWindow();
@@ -45,16 +44,16 @@ std::string ToString(const T& t) {
 template <class Scalable>
 void SetSize(Scalable& sc, sf::FloatRect csize, float tx, float ty) {
     // auto csize = sc.getGlobalBounds();
-    float cx = csize.width;
-    float cy = csize.height;
+    float cx = csize.size.x;
+    float cy = csize.size.y;
     
-    sc.scale(tx / cx, ty / cy);
+    sc.scale({tx / cx, ty / cy});
 }
 
 template <class Moveable>
 void Center(Moveable& mv, sf::Vector2u bounds) {
-    mv.setPosition(bounds.x / 2.0, mv.getPosition().y);
-    mv.move(-1 * (mv.getGlobalBounds().width / 2.0), 0);
+    mv.setPosition({(float)(bounds.x / 2.0), mv.getPosition().y});
+    mv.move({(float)(-1 * (mv.getGlobalBounds().size.x / 2.0)), 0});
 }
 
 /*template <class Dest, class From>

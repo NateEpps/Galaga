@@ -10,14 +10,16 @@
 
 using namespace sf;
 
-ClickText::ClickText()
+ClickText::ClickText(const sf::Font& font) : sf::Text(font)
 {
     isHighlighted = false;
 }
 
 void ClickText::process(sf::Event e)
 {
-    if (e.type == Event::MouseButtonPressed && isHighlighted) {
+    const sf::Event::MouseButtonPressed* mouseEv = e.getIf<sf::Event::MouseButtonPressed>();
+
+    if (mouseEv && isHighlighted) {
         Vector2f mousePos = (Vector2f) Mouse::getPosition(*GetLastWindow());
         
         if (getGlobalBounds().contains(mousePos))

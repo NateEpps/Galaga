@@ -11,23 +11,23 @@
 
 using namespace sf;
 
-TitlePanel::TitlePanel(ControllerPanel* cp) : parent(cp)
+TitlePanel::TitlePanel(ControllerPanel* cp)
+    : parent(cp), playButton(prototype), quitButton(prototype), copyright(prototype)
 {
     auto titleInfo = getResourceTitlePng();
     if (!titleTexture.loadFromMemory(titleInfo.data, titleInfo.size))
         throw MakeException("Could not load title.png");
-    
-    titleSprite.setTexture(titleTexture);
-    
+
+    titleSprite.emplace(titleTexture);
+
     Vector2u wsize = GetLastWindow()->getSize();
-    titleSprite.setPosition(0, wsize.y / 8.0);
-    SetSize(titleSprite, titleSprite.getGlobalBounds(), wsize.x * 0.45, wsize.y * 0.4);
-    Center(titleSprite, wsize);
+    titleSprite.value().setPosition(sf::Vector2f(0, wsize.y / 8.0));
+    SetSize(titleSprite.value(), titleSprite.value().getGlobalBounds(), wsize.x * 0.45, wsize.y * 0.4);
+    Center(titleSprite.value(), wsize);
     
     playButton.setString("Play");
-    playButton.setPosition(wsize.x / 2.0, wsize.y * 0.55);
+    playButton.setPosition(sf::Vector2f(wsize.x / 2.0, wsize.y * 0.55));
     playButton.setCharacterSize(wsize.x * 0.075);
-    playButton.setFont(prototype);
     Center(playButton, wsize);
     playButton.setAction([this](){
 //#define TEST_GAMEOVER
@@ -41,18 +41,16 @@ TitlePanel::TitlePanel(ControllerPanel* cp) : parent(cp)
     });
     
     quitButton.setString("Quit");
-    quitButton.setPosition(wsize.x / 2, 3 * wsize.y / 4.0);
+    quitButton.setPosition(sf::Vector2f(wsize.x / 2, 3 * wsize.y / 4.0));
     quitButton.setCharacterSize(wsize.x * 0.075);
-    quitButton.setFont(prototype);
     Center(quitButton, wsize);
     quitButton.setAction([](){
         GetLastWindow()->close();
     });
     
     copyright.setString("[c] Nathanael Epps & Namco 2018-19");
-    copyright.setFont(prototype);
     copyright.setCharacterSize(wsize.x * 0.01);
-    copyright.setPosition(0, wsize.y - copyright.getGlobalBounds().height - 5);
+    copyright.setPosition(sf::Vector2f(0, wsize.y - copyright.getGlobalBounds().size.y - 5));
     Center(copyright, wsize);
 }
 
@@ -72,7 +70,7 @@ void TitlePanel::update(sf::Time dt)
 
 void TitlePanel::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    target.draw(titleSprite, states);
+    target.draw(titleSprite.value(), states);
     
     target.draw(playButton, states);
     target.draw(quitButton, states);

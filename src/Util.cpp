@@ -44,7 +44,7 @@ void PrintInfo()
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-void GetVideoMode(sf::VideoMode& vmref, mask_t& maskref, bool fscreen)
+void GetVideoMode(sf::VideoMode& vmref, sf::State& maskref, bool fscreen)
 {
 #ifdef DEBUG
     Print("Selecting ", (fscreen)?("fullscreen"):("windowed"), " mode...");
@@ -54,7 +54,7 @@ void GetVideoMode(sf::VideoMode& vmref, mask_t& maskref, bool fscreen)
     auto desk = VideoMode::getDesktopMode();
     
     if (!fscreen) {
-        maskref = Style::Default;
+        maskref = sf::State::Windowed;
         vmref = desk;
         return;
     }
@@ -62,22 +62,22 @@ void GetVideoMode(sf::VideoMode& vmref, mask_t& maskref, bool fscreen)
     const auto& modes = VideoMode::getFullscreenModes();
     
     auto itr = std::find_if(modes.begin(), modes.end(), [=](VideoMode vm){
-        return ((vm.width <= desk.width) &&
-                (vm.height <= desk.height) &&
+        return ((vm.size.x <= desk.size.x) &&
+                (vm.size.y <= desk.size.y) &&
                 (vm.bitsPerPixel <= vm.bitsPerPixel));
     });
     
     if (itr != modes.end() && itr->isValid())
     {
         vmref = *itr;
-        maskref = Style::Fullscreen;
+        maskref = sf::State::Fullscreen;
     }
     else
     {
         Error("Can't create fullscreen, using desktop mode...");
         
         vmref = desk;
-        maskref = Style::Default;
+        maskref = sf::State::Windowed;
     }
 }
 
@@ -146,12 +146,12 @@ void OffscreenGuard(sf::Transformable& t, sf::Vector2f shsize)
     sf::Vector2u wsize = GetLastWindow()->getSize();
     
     if (t.getPosition().x < 0)
-        t.setPosition(1, t.getPosition().y);
+        t.setPosition(sf::Vector2f(1, t.getPosition().y));
     if (t.getPosition().x > wsize.x - shsize.x)
-        t.setPosition(wsize.x - shsize.x - 1, t.getPosition().y);
+        t.setPosition(sf::Vector2f(wsize.x - shsize.x - 1, t.getPosition().y));
     
     if (t.getPosition().y < 0)
-        t.setPosition(t.getPosition().x, 1);
+        t.setPosition(sf::Vector2f(t.getPosition().x, 1));
     if (t.getPosition().y > wsize.y - shsize.y)
-        t.setPosition(t.getPosition().x, wsize.y - shsize.y - 1);
+        t.setPosition(sf::Vector2f(t.getPosition().x, wsize.y - shsize.y - 1));
 }

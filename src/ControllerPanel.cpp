@@ -27,9 +27,9 @@ gameOverPanel(this)
 
 void ControllerPanel::process(sf::Event event)
 {
-    if (event.type == Event::LostFocus)
+    if (event.is<sf::Event::FocusLost>())
         pcurrent->onLoseFocus();
-    else if (event.type == Event::GainedFocus)
+    else if (event.is<sf::Event::FocusGained>())
         pcurrent->onGainFocus();
     else
         pcurrent->process(event);

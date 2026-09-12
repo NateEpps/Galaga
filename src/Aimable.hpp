@@ -7,7 +7,7 @@
 #define AIMABLE_HPP
 
 #include <cmath>
-#include <SFML/Graphics.hpp>
+#include <SFML/System/Vector2.hpp>
 
 class Aimable
 {
@@ -16,7 +16,7 @@ public:
     
     void moveAtAngle(unsigned, double);
     
-    virtual void move(double, double) = 0;
+    virtual void move(float, float) = 0;
     virtual sf::Vector2f getPosition() const = 0;
 };
 

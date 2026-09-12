@@ -84,8 +84,8 @@ void EnemyGroup::update(sf::Time dt)
             
             if (lowy < 0) {
                 FloatRect bounds = getBounds();
-                
-                lowy = bounds.top + bounds.height + Offset;
+
+                lowy = bounds.position.y + bounds.size.y + Offset;
             }
         
             if (pcurrent->getPosition().x >= (wsize.x / 2.0))
@@ -152,18 +152,18 @@ void EnemyGroup::spreadAt(float px, float py)
 {
     Vector2f curPos(px, py);
     auto bounds = sprites.at(0).getBounds();
-    
+
     for (size_t y = 0; y < height; y++)
     {
         for (size_t x = 0; x < width; x++)
         {
             get(x, y).addPoint(curPos);
-            
-            curPos.x += bounds.width + Offset;
+
+            curPos.x += bounds.size.x + Offset;
         }
-        
+
         curPos.x = px;
-        curPos.y += bounds.height + Offset;
+        curPos.y += bounds.size.y + Offset;
     }
 }
 
@@ -199,12 +199,12 @@ FloatRect EnemyGroup::getBounds() const
     
     float px = sprites.front().getPosition().x;
     float py = sprites.front().getPosition().y;
-    
+
     // Offset-x and offset-y, maybe?
-    float sx = (spriteBounds.width * width) + (Offset * (width - 1));
-    float sy = (spriteBounds.height * height) + (Offset * (height - 1));
-    
-    return FloatRect(px, py, sx, sy);
+    float sx = (spriteBounds.size.x * width) + (Offset * (width - 1));
+    float sy = (spriteBounds.size.y * height) + (Offset * (height - 1));
+
+    return FloatRect({px, py}, {sx, sy});
 }
 
 FloatRect EnemyGroup::getSingleEnemyBounds() const

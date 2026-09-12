@@ -17,14 +17,8 @@ static const int AmtMissilesAllowed = 2;
 
 // #define MOVE_UP_DOWN
 
-Player::Player()
-{
-    rss_t sBytes = getResourceShipPng();
-    if (!sTexture.loadFromMemory(sBytes.data, sBytes.size))
-        throw MakeException("Could not load ship texture data");
-    
-    self.setTexture(sTexture);
-    
+Player::Player() : self(getSpriteTexture())
+{    
     Vector2u wsize = GetLastWindow()->getSize();
     
     SetSize(self, getBounds(), wsize.x * 0.05, wsize.x * 0.05);
@@ -48,23 +42,23 @@ Player::~Player()
 
 void Player::process(sf::Event event)
 {
-    if (event.type == Event::KeyPressed && event.key.code == Keyboard::Space)
+    const sf::Event::KeyPressed* keyEv = event.getIf<sf::Event::KeyPressed>();
+
+    if (keyEv && keyEv->code == Keyboard::Key::Space)
     {
         if (missiles.size() >= AmtMissilesAllowed)
             return;
         
-        Sprite sprite;
+        Sprite sprite(mTexture);
         Vector2u wsize = GetLastWindow()->getSize();
         float sizex = wsize.x * 0.01;
         float sizey = sizex * 2.0;
-        
-        sprite.setTexture(mTexture);
         
         SetSize(sprite, sprite.getGlobalBounds(), sizex, sizey);
         
         Vector2f pos = getPosition();
         pos.y -= sizey;
-        pos.x += getBounds().width / 2;
+        pos.x += getBounds().size.x / 2;
         pos.x -= sizex / 2.0;
         
         sprite.setPosition(pos);
@@ -82,26 +76,26 @@ void Player::update(sf::Time dt)
     else if (Keyboard::isKeyPressed(Keyboard::Up))
         dy = -1;
 #endif
-    if (Keyboard::isKeyPressed(Keyboard::Left))
+    if (Keyboard::isKeyPressed(Keyboard::Key::Left))
         dx = -1;
-    else if (Keyboard::isKeyPressed(Keyboard::Right))
+    else if (Keyboard::isKeyPressed(Keyboard::Key::Right))
         dx = 1;
     
 #warning BUG LOCATED
-    self.move(dx * dt.asMilliseconds(), dy * dt.asMilliseconds());
+    self.move(sf::Vector2f(dx * dt.asMilliseconds(), dy * dt.asMilliseconds()));
 
     if (dt.asMilliseconds() <= 1)
         throw MakeException("dt.asMilliseconds() <= 1");
     
     // don't go offscreen...
-    OffscreenGuard(self, Vector2f(getBounds().width, getBounds().height));
+    OffscreenGuard(self, Vector2f(getBounds().size.x, getBounds().size.y));
     
     // ... or past this line
 #warning Rethink this part
     static const Vector2u wsize = GetLastWindow()->getSize();
     static const float bound = wsize.y * 0.6;
     if (self.getPosition().y < bound)
-        self.setPosition(self.getPosition().x, bound + 1);
+        self.setPosition(sf::Vector2f(self.getPosition().x, bound + 1));
     
     // handle missiles
     if (missiles.size() == 0)
@@ -110,9 +104,9 @@ void Player::update(sf::Time dt)
     bool shouldPop = false;
     
     for (Sprite& ref : missiles) {
-        ref.move(0, -1 * dt.asMilliseconds());
+        ref.move(sf::Vector2f(0, -1 * dt.asMilliseconds()));
         
-        if (ref.getPosition().y < (-2 * ref.getGlobalBounds().height)) {
+        if (ref.getPosition().y < (-2 * ref.getGlobalBounds().size.y)) {
             if (shouldPop)
                 throw MakeException("Trying to pop multiple projectiles");
             
@@ -140,4 +134,13 @@ void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const
     
     for (const auto& ref : missiles)
         target.draw(ref, states);
+}
+
+const sf::Texture& Player::getSpriteTexture()
+{
+    rss_t sBytes = getResourceShipPng();
+    if (!sTexture.loadFromMemory(sBytes.data, sBytes.size))
+        throw MakeException("Could not load ship texture data");
+    
+    return sTexture;
 }

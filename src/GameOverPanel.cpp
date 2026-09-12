@@ -9,22 +9,22 @@
 #include "StoredData.hpp"
 #include "Util.hpp"
 
-GameOverPanel::GameOverPanel(ControllerPanel* pcp) : parent(pcp)
+GameOverPanel::GameOverPanel(ControllerPanel* pcp)
+    : parent(pcp), header(prototype), gameScore(prototype),
+      highScore(prototype), mainMenu(prototype), playAgain(prototype)
 {
     auto wsize = GetLastWindow()->getSize();
     
     header.setString("Game Over");
-    header.setPosition(0, wsize.y * 0.15);
+    header.setPosition({0, (float)(wsize.y * 0.15)});
     header.setCharacterSize(wsize.x * 0.1);
-    header.setFont(prototype);
     Center(header, wsize);
     
     // gameScore set up in reset
     
     playAgain.setString("Play Again");
-    playAgain.setPosition(0, wsize.y * 0.65);
+    playAgain.setPosition({0, (float)(wsize.y * 0.65)});
     playAgain.setCharacterSize(wsize.x * 0.04);
-    playAgain.setFont(prototype);
     Center(playAgain, wsize);
     playAgain.setAction([this](){
         parent->getBackgroundRef().restart();
@@ -33,9 +33,8 @@ GameOverPanel::GameOverPanel(ControllerPanel* pcp) : parent(pcp)
     });
     
     mainMenu.setString("Main Menu");
-    mainMenu.setPosition(0, playAgain.getPosition().y + playAgain.getGlobalBounds().height + (wsize.x * 0.02));
+    mainMenu.setPosition({0, (float)(playAgain.getPosition().y + playAgain.getGlobalBounds().size.y + (wsize.x * 0.02))});
     mainMenu.setCharacterSize(playAgain.getCharacterSize());
-    mainMenu.setFont(prototype);
     Center(mainMenu, wsize);
     mainMenu.setAction([this](){
         parent->getBackgroundRef().restart();
@@ -50,9 +49,13 @@ GameOverPanel::~GameOverPanel()
 
 void GameOverPanel::process(sf::Event e)
 {
-    if (e.type == sf::Event::KeyPressed && e.key.code == sf::Keyboard::Escape)
+// #define EXIT_ON_ESC
+#ifdef EXIT_ON_ESC
+    const sf::Event::KeyPressed* keyEv = e.getIf<sf::Event::KeyPressed>();
+    if (keyEv && keyEv->code == sf::Keyboard::Key::Escape)
         exit(EXIT_SUCCESS);
-    
+#endif
+
     playAgain.process(e);
     mainMenu.process(e);
 }
@@ -70,8 +73,7 @@ void GameOverPanel::reset()
     
     gameScore.setString("Score: " + ToString(prevScore));
     gameScore.setCharacterSize(wsize.x * 0.03);
-    gameScore.setPosition(0, header.getPosition().y + (header.getGlobalBounds().height * 1.4));
-    gameScore.setFont(prototype);
+    gameScore.setPosition({0, (float)(header.getPosition().y + (header.getGlobalBounds().size.y * 1.4))});
     Center(gameScore, wsize);
     
     unsigned highSc = StoredData::getHighScore();
@@ -84,8 +86,7 @@ void GameOverPanel::reset()
     }
     
     highScore.setCharacterSize(wsize.x * 0.03);
-    highScore.setPosition(0, gameScore.getPosition().y + gameScore.getGlobalBounds().height + (wsize.x * 0.02));
-    highScore.setFont(prototype);
+    highScore.setPosition({0, (float)(gameScore.getPosition().y + gameScore.getGlobalBounds().size.y + (wsize.x * 0.02))});
     Center(highScore, wsize);
 }
 

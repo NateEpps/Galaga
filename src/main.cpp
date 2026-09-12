@@ -26,7 +26,7 @@ static void AddIcon(Window& window)
     if (!img.loadFromMemory(bytes.data, bytes.size))
         throw MakeException("Could not load icon");
     
-    window.setIcon(img.getSize().x, img.getSize().y, img.getPixelsPtr());
+    window.setIcon(sf::Vector2u(img.getSize().x, img.getSize().y), img.getPixelsPtr());
     // Image is copied, no need to store externally
 }
 
@@ -55,7 +55,7 @@ static int main2(std::vector<string> args)
     RenderWindow window;
     
     VideoMode vmode;
-    mask_t styleMask;
+    sf::State styleMask;
     bool fscreen = (std::find(args.begin(), args.end(), "--window") == args.end());
     
     GetVideoMode(vmode, styleMask, fscreen);
@@ -68,18 +68,17 @@ static int main2(std::vector<string> args)
     AddIcon(window);
     
     ControllerPanel panel;
-    Event event;
     Clock clock;
     
     Print("Entering game loop");
     while (window.isOpen())
     {
-        while (window.pollEvent(event))
+        for (std::optional<sf::Event> event = window.pollEvent(); event.has_value(); event = window.pollEvent())
         {
-            if (event.type == Event::Closed)
+            if (event.value().is<Event::Closed>())
                 window.close();
             else
-                panel.process(event);
+                panel.process(event.value());
         }
         
 #warning Todo(3) - fixed frame rate?

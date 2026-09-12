@@ -10,10 +10,8 @@
 
 using namespace sf;
 
-Enemy::Enemy(const Texture& t)
-{
-    self.setTexture(t);
-    
+Enemy::Enemy(const Texture& t) : self(t)
+{    
     auto wsize = GetLastWindow()->getSize();
     
     SetSize(self, self.getGlobalBounds(), wsize.x * 0.06, wsize.x * 0.05);

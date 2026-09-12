@@ -2,17 +2,15 @@
 # CMakeLists.txt - Galaga
 # Nathanael Epps
 #
-# The main build script for the project, requires CMake >= 3.1 and SFML >= 2.5.
-#
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.10)
 
 project(Galaga VERSION 0.7)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Find SFML
-find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
+find_package(SFML 3 COMPONENTS Graphics Window System REQUIRED)
 
 # Debug/Release
 if (NOT CMAKE_BUILD_TYPE)
@@ -35,7 +33,7 @@ add_executable(Galaga ${SourceCode})
 add_library(Galaga-Rss STATIC ${ResourceCode})
 
 # Link
-target_link_libraries(Galaga Galaga-Rss sfml-graphics sfml-window sfml-system)
+target_link_libraries(Galaga Galaga-Rss SFML::Graphics SFML::Window SFML::System)
 
 # Write Configuration file - depends on compile step
 message(STATUS "Writing ${CMAKE_BINARY_DIR}/Config.hpp...")

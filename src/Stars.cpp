@@ -23,11 +23,11 @@ Stars::Stars(const int amt) : wsize(GetLastWindow()->getSize())
         
         theCircle.setFillColor(StarColor);
         theCircle.setRadius(wsize.y * SizePercent);
-        theCircle.setPosition(RandInt(Offset, wsize.x - Offset),
+        theCircle.setPosition(sf::Vector2f(RandInt(Offset, wsize.x - Offset),
 #ifdef START_AT_TOP
-                              RandInt(-100, 0));
+                              RandInt(-100, 0)));
 #else
-                              RandInt(Offset, wsize.y - Offset));
+                              RandInt(Offset, wsize.y - Offset)));
 #endif
         
         circles.push_back({theCircle, RandInt(LowSpeed, HighSpeed)});
@@ -40,15 +40,15 @@ void Stars::update(sf::Time dt)
 {
     if (isOn) {
         for (StarStruct& ss : circles) {
-            ss.shape.move(0, ss.speed * dt.asSeconds());
+            ss.shape.move(sf::Vector2f(0, ss.speed * dt.asSeconds()));
             if (ss.shape.getPosition().y > wsize.y + 20)
-                ss.shape.setPosition(ss.shape.getPosition().x, -50);
+                ss.shape.setPosition(sf::Vector2f(ss.shape.getPosition().x, -50));
         }
     }
     else {
         for (StarStruct& ss : circles) {
             if (ss.shape.getPosition().y <= wsize.y + 20)
-                ss.shape.move(0, ss.speed * dt.asSeconds());
+                ss.shape.move(sf::Vector2f(0, ss.speed * dt.asSeconds()));
         }
     }
 }
@@ -58,11 +58,11 @@ void Stars::restart()
     isOn = true;
     
     for (StarStruct& ss : circles) {
-        ss.shape.setPosition(RandInt(Offset, wsize.x - Offset),
+        ss.shape.setPosition(sf::Vector2f(RandInt(Offset, wsize.x - Offset),
 #ifdef START_AT_TOP
-                             RandInt(-100, 0));
+                             RandInt(-100, 0)));
 #else
-                             RandInt(Offset, wsize.y - Offset));
+                             RandInt(Offset, wsize.y - Offset)));
 #endif
     }
 }

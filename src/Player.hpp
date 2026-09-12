@@ -34,11 +34,11 @@ public:
     
     inline size_t getAmtMissiles() const { return missiles.size(); }
     
-    inline void setPosition(float x, float y) { self.setPosition(x, y); }
+    inline void setPosition(float x, float y) { self.setPosition({x, y}); }
     inline void setPosition(sf::Vector2f v) { self.setPosition(v); }
     inline sf::Vector2f getPosition() const { return self.getPosition(); }
     
-    inline void move(float dx, float dy) { self.move(dx, dy); }
+    inline void move(float dx, float dy) { self.move({dx, dy}); }
     
     inline sf::FloatRect getBounds() const { return self.getGlobalBounds(); }
     
@@ -47,6 +47,9 @@ public:
     friend class GamePanel;
     
 private:
+    // Load and return sprite texture, only call once
+    const sf::Texture& getSpriteTexture();
+
     sf::Sprite self;
     sf::Texture sTexture;
     sf::Texture mTexture;

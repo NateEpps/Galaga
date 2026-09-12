@@ -18,7 +18,7 @@ BasePanel::BasePanel()
 {
     if (!fontInit) {
         rss_t font = getResourcePrototypeTtf();
-        if (!prototype.loadFromMemory(font.data, font.size))
+        if (!prototype.openFromMemory(font.data, font.size))
             throw MakeException("Could not load font");
         
         fontInit = true;

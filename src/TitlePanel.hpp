@@ -6,6 +6,8 @@
 #ifndef TITLEPANEL_HPP
 #define TITLEPANEL_HPP
 
+#include <optional>
+
 #include <SFML/Graphics/Sprite.hpp>
 
 #include "BasePanel.hpp"
@@ -29,7 +31,7 @@ public:
 private:
     ControllerPanel* parent;
     sf::Texture titleTexture;
-    sf::Sprite titleSprite;
+    std::optional<sf::Sprite> titleSprite;
     
     ClickText playButton;
     ClickText quitButton;

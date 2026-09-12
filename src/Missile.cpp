@@ -28,14 +28,14 @@ Missile::Missile(sf::Vector2f vStart, sf::Vector2f vTarget)
     double width = wsize.x * 0.01;
     double height = width * 2;
     
-    sprite.setTexture(texture);
-    SetSize(sprite, sprite.getGlobalBounds(), width, height);
+    sprite.emplace(texture);
+    SetSize(sprite.value(), sprite.value().getGlobalBounds(), width, height);
     
     direction = GetDirection(vStart, vTarget);
     
-    sprite.setRotation((direction + 270) % 360);
+    sprite.value().setRotation(sf::degrees((direction + 270) % 360));
     
-    sprite.setPosition(vStart);
+    sprite.value().setPosition(vStart);
 }
 
 double Missile::getSpeedFactor() const
@@ -50,20 +50,20 @@ void Missile::update(sf::Time dt)
 
 sf::FloatRect Missile::getGlobalBounds() const
 {
-    return sprite.getGlobalBounds();
+    return sprite.value().getGlobalBounds();
 }
 
-void Missile::move(double dx, double dy)
+void Missile::move(float dx, float dy)
 {
-    sprite.move(dx, dy);
+    sprite.value().move({dx, dy});
 }
 
 sf::Vector2f Missile::getPosition() const
 {
-    return sprite.getPosition();
+    return sprite.value().getPosition();
 }
 
 void Missile::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    target.draw(sprite, states);
+    target.draw(sprite.value(), states);
 }

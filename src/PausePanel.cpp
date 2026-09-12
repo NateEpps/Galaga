@@ -10,9 +10,8 @@
 
 using namespace sf;
 
-PausePanel::PausePanel(ControllerPanel* pcp,
-                       GamePanel* pgp,
-                       Stars* ps)
+PausePanel::PausePanel(ControllerPanel* pcp, GamePanel* pgp, Stars* ps)
+    : heading(prototype), cont(prototype), exit(prototype)
 {
     if (!pcp || !pgp || !ps)
         throw MakeException("Nullptr");
@@ -23,25 +22,22 @@ PausePanel::PausePanel(ControllerPanel* pcp,
     
     auto wsize = GetLastWindow()->getSize();
     
-    heading.setFont(prototype);
     heading.setString("Paused");
     heading.setCharacterSize(wsize.x * 0.1);
-    heading.setPosition(0, wsize.y * 0.25);
+    heading.setPosition({0, (float)(wsize.y * 0.25)});
     Center(heading, wsize);
     
-    cont.setFont(prototype);
     cont.setString("Continue");
     cont.setCharacterSize(wsize.x * 0.05);
-    cont.setPosition(0, wsize.y * 0.5);
+    cont.setPosition({0, (float)(wsize.y * 0.5)});
     Center(cont, wsize);
     cont.setAction([this](){
         parent->setCurrentPanel(parent->getGamePanel());
     });
     
-    exit.setFont(prototype);
     exit.setString("Exit");
     exit.setCharacterSize(cont.getCharacterSize());
-    exit.setPosition(0, wsize.y * 0.65);
+    exit.setPosition({0, (float)(wsize.y * 0.65)});
     Center(exit, wsize);
     exit.setAction([this](){
         parent->setCurrentPanel(parent->getTitlePanel());
@@ -50,10 +46,11 @@ PausePanel::PausePanel(ControllerPanel* pcp,
 
 void PausePanel::process(sf::Event event)
 {
-    if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape) {
+    const sf::Event::KeyPressed* keyEv = event.getIf<sf::Event::KeyPressed>();
+
+    if (keyEv && keyEv->code == Keyboard::Key::Escape) {
         parent->setCurrentPanel(parent->getGamePanel());
-    }
-    else {
+    } else {
         cont.process(event);
         exit.process(event);
     }

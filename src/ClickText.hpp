@@ -15,7 +15,7 @@ typedef std::function<void(void)> Action;
 class ClickText : public sf::Text
 {
 public:
-    ClickText();
+    ClickText(const sf::Font&);
     
     void process(sf::Event);
     

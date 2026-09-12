@@ -6,6 +6,8 @@
 #ifndef MISSILE_HPP
 #define MISSILE_HPP
 
+#include <optional>
+
 #include <SFML/Graphics.hpp>
 
 #include "Aimable.hpp"
@@ -21,7 +23,7 @@ public:
     
     sf::FloatRect getGlobalBounds() const;
     
-    virtual void move(double, double) override;
+    virtual void move(float, float) override;
     
     virtual sf::Vector2f getPosition() const override;
     
@@ -30,7 +32,7 @@ public:
 private:
     static sf::Texture texture;
     
-    sf::Sprite sprite;
+    std::optional<sf::Sprite> sprite;
     
     unsigned int direction;
 };

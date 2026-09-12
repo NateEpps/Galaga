@@ -57,13 +57,13 @@ public:
     
     // Fake transformable
     
-    inline void setPosition(float x, float y) { self.setPosition(x, y); }
+    inline void setPosition(float x, float y) { self.setPosition({x, y}); }
     inline void setPosition(sf::Vector2f v) { self.setPosition(v); }
     virtual sf::Vector2f getPosition() const override { return self.getPosition(); }
     
     inline sf::FloatRect getBounds() const { return self.getGlobalBounds(); }
     
-    virtual void move(double dx, double dy) override { self.move(dx, dy); }
+    virtual void move(float dx, float dy) override { self.move({dx, dy}); }
     
 private:
     sf::Sprite self;

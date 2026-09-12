@@ -13,7 +13,7 @@ using namespace sf;
 
 static Texture heartTexture;
 
-GamePanel::GamePanel(ControllerPanel* pcp) : parent(pcp)
+GamePanel::GamePanel(ControllerPanel* pcp) : parent(pcp), pointsText(prototype)
 {
     // Only put things here that don't change
     // when the game is re-launched, things that change
@@ -30,8 +30,7 @@ GamePanel::GamePanel(ControllerPanel* pcp) : parent(pcp)
     const sf::Vector2u wsize = GetLastWindow()->getSize();
     
     for (int x = 0; x < 3; x++) {
-        sf::Sprite sprite;
-        sprite.setTexture(heartTexture);
+        sf::Sprite sprite(heartTexture);
         
         const double SideLen = wsize.x * 0.04;
         
@@ -39,14 +38,13 @@ GamePanel::GamePanel(ControllerPanel* pcp) : parent(pcp)
         
         static const double XOffset = wsize.x * 0.007;
         
-        sprite.setPosition(x * (SideLen + XOffset) + 5, 5);
+        sprite.setPosition({(float)(x * (SideLen + XOffset) + 5), 5});
         
         hearts.push_back(sprite);
     }
     
     reset();
-    
-    pointsText.setFont(prototype);
+
     pointsText.setCharacterSize(wsize.x * 0.0275);
     pointsText.setString("Points: (?)");
 }
@@ -62,7 +60,8 @@ GamePanel::GamePanel(ControllerPanel* pcp) : parent(pcp)
 
 void GamePanel::process(sf::Event event)
 {
-    if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
+    const sf::Event::KeyPressed* keyEv = event.getIf<sf::Event::KeyPressed>();
+    if (keyEv && keyEv->code == sf::Keyboard::Key::Escape)
         parent->setCurrentPanel(parent->getPausePanel());
     else
         pplayer->process(event);
@@ -72,7 +71,7 @@ void GamePanel::process(sf::Event event)
 GamePanel::MissileItr GamePanel::testAndRemoveMissiles(MissileItr start, MissileItr end)
 {
     return std::remove_if(start, end, [&](const Missile& m){
-        return m.getGlobalBounds().intersects(pplayer->getBounds());
+        return m.getGlobalBounds().findIntersection(pplayer->getBounds()).has_value();
     });
 }
 
@@ -95,7 +94,7 @@ void GamePanel::update(sf::Time dt)
             FloatRect eBounds = enemy.getBounds();
             for (Sprite& missile : missiles) {
                 FloatRect mBounds = missile.getGlobalBounds();
-                if (eBounds.intersects(mBounds)) {
+                if (eBounds.findIntersection(mBounds).has_value()) {
                     // save missiles from enemies that die mid-fire
 #warning This overwrites any existing extra missiles
                     if (enemy.getMissilesRef().size() > 0)
@@ -160,9 +159,9 @@ void GamePanel::reset()
     static const auto wsize = GetLastWindow()->getSize();
     static const auto Offset = wsize.x * 0.01;
     
-    pointsText.setPosition(wsize.x, Offset / 2.0);
+    pointsText.setPosition({(float)wsize.x, (float)(Offset / 2.0)});
     pointsText.setString("Points: " + ToString(pointsActual));
-    pointsText.move((-1 * pointsText.getGlobalBounds().width) - Offset, 0);
+    pointsText.move({(float)((-1 * pointsText.getGlobalBounds().size.x) - Offset), 0});
 }
 
 /*private*/ void GamePanel::setupPlayer()
@@ -170,8 +169,8 @@ void GamePanel::reset()
     Vector2u wsize = GetLastWindow()->getSize();
     pplayer = std::make_unique<Player>();
     pplayer->setPosition(wsize.x / 2, wsize.y * 0.8);
-    pplayer->move(-1 * (pplayer->getBounds().width / 2.0),
-                  -1 * (pplayer->getBounds().height / 2.0));
+    pplayer->move((float)(-1 * (pplayer->getBounds().size.x / 2.0)),
+                  (float)(-1 * (pplayer->getBounds().size.y / 2.0)));
 }
 
 /*private*/ void GamePanel::setupGroup()
@@ -189,12 +188,12 @@ void GamePanel::reset()
     // start offscreen
     auto enemyBounds = pgroup->getSingleEnemyBounds();
     pgroup->setUpdateMode(UpdateMode::Instant);
-    pgroup->stackAt(-1 * enemyBounds.width,
-                    -1 * enemyBounds.height);
+    pgroup->stackAt(-1 * enemyBounds.size.x,
+                    -1 * enemyBounds.size.y);
     
     // set up so it moves onscreen
     Vector2f center(wsize.x / 2, wsize.y * 0.1);
-    center.x -= pgroup->getBounds().width / 2;
+    center.x -= pgroup->getBounds().size.x / 2;
     
     // Randomly pick update mode
 #warning Switch this back eventually
@@ -224,9 +223,9 @@ void GamePanel::reset()
     static const auto wsize = GetLastWindow()->getSize();
     static const auto Offset = wsize.x * 0.01;
     
-    pointsText.setPosition(wsize.x, Offset / 2.0);
+    pointsText.setPosition({(float)wsize.x, (float)(Offset / 2.0)});
     pointsText.setString("Points: " + ToString(pointsActual));
-    pointsText.move((-1 * pointsText.getGlobalBounds().width) - Offset, 0);
+    pointsText.move({(float)((-1 * pointsText.getGlobalBounds().size.x) - Offset), 0});
 }
 
 /*private*/ void GamePanel::playerIsHit()
@@ -245,8 +244,8 @@ sf::Vector2f GamePanel::getPlayerPosition() const
     auto pos = pplayer->getPosition();
     auto bounds = pplayer->getBounds();
     
-    pos.x += bounds.width / 2;
-    pos.y += bounds.height / 2;
+    pos.x += bounds.size.x / 2;
+    pos.y += bounds.size.y / 2;
     
     return pos;
 }
